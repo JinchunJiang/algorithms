@@ -87,13 +87,13 @@ function maintain(node) {
       // LR型
       node.left = leftRotate(node.left);
     }
-    node = rightRotate(node); // LL型或LR型
+    node = rightRotate(node); // LL型
   } else {
     if (node.right.left.height > node.right.right.height) {
       // RL型
       node.right = rightRotate(node.right);
     }
-    node = leftRotate(node); // RL型或RR型
+    node = leftRotate(node); // RR型
   }
   return node;
 }
