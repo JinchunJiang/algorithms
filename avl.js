@@ -1,6 +1,5 @@
 // 实现AVL(平衡二叉搜索树)
 
-
 class TreeNode {
   constructor(val = undefined, height = 0, left = null, right = null) {
     this.val = val;
@@ -10,7 +9,7 @@ class TreeNode {
   }
 }
 
-const NIL = new TreeNode();
+const NIL = new TreeNode(); // 虚拟空节点
 
 function getNewNode(val) {
   return new TreeNode(val, 1, NIL, NIL);
@@ -59,7 +58,7 @@ function erase(node, val) {
       node.left = erase(node.left, temp.val);
     }
   }
-  updateHeight(node)
+  updateHeight(node);
   return maintain(node);
 }
 
@@ -67,7 +66,7 @@ function erase(node, val) {
 function predeccessor(node) {
   if (node === NIL) return node;
   let temp = node.left;
-  while(temp.right !== NIL) temp = temp.right;
+  while (temp.right !== NIL) temp = temp.right;
   return temp;
 }
 
@@ -80,7 +79,8 @@ function updateHeight(node) {
 
 // 调整
 function maintain(node) {
-  if (node === NIL || Math.abs(node.left.height - node.right.height) < 2) return node;
+  if (node === NIL || Math.abs(node.left.height - node.right.height) < 2)
+    return node;
   // 失衡
   if (node.left.height > node.right.height) {
     if (node.left.right.height > node.left.left.height) {
@@ -103,8 +103,8 @@ function leftRotate(node) {
   const newRoot = node.right;
   node.right = newRoot.left;
   newRoot.left = node;
-  updateHeight(node)
-  updateHeight(newRoot)
+  updateHeight(node);
+  updateHeight(newRoot);
   return newRoot;
 }
 
@@ -113,22 +113,21 @@ function rightRotate(node) {
   const newRoot = node.left;
   node.left = newRoot.right;
   newRoot.right = node;
-  updateHeight(node)
-  updateHeight(newRoot)
+  updateHeight(node);
+  updateHeight(newRoot);
   return newRoot;
 }
 
-
-(function() {
+(function () {
   let root = getNewNode(5);
   root = insert(root, 3);
   root = insert(root, 11);
   root = insert(root, 9);
   root = insert(root, 12);
   root = insert(root, 7);
-  console.log('==== 开始打印 ==== ')
+  console.log("==== 开始打印 ==== ");
   output(root);
-  console.log('==== 结束打印 ==== ')
+  console.log("==== 结束打印 ==== ");
 })();
 
 // 前序遍历打印树
