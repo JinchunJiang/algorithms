@@ -71,6 +71,104 @@ function insertMaintain(root) {
   return root;
 }
 
+function erase(root, val) {
+  root = _erase(root, val);
+  root.color = 1;
+  return root;
+}
+
+function _erase(root, val) {
+  if (root === NIL) return root;
+  if (val < root.val) {
+    root.left = _erase(root.left, val);
+  } else if (val > root.val) {
+    root.right = _erase(root.right, val);
+  } else {
+    if (root.left === NIL || root.right === NIL) {
+      // 当前节点度为0或者度为1
+      const temp = root.left === NIL ? root.right : root.left;
+      // 精髓！！！
+      // 涵盖了当前节点为黑或红且度为0或1的4种情况
+      temp.color += root.color;
+      delete root;
+      return temp;
+    } else {
+      // 度为2的节点
+      const temp = predeccessor(root);
+      root.val = temp.val;
+      root.left = _erase(root.left, temp.val);
+    }
+  }
+  return eraseMaintain(root);
+}
+
+// 删除调整
+function eraseMaintain(root) {
+  // 当前节点的子节点没有双重黑时不需要调整
+  if (root.left.color !== 2 && root.right.color !== 2) return root;
+  if (hasRedChild(root)) {
+    // 说明双重黑的兄弟节点是红色
+    // 要通过旋转将红色的兄弟节点变成根节点
+    // 并使得旋转之后双重黑节点的兄弟节点也是黑色的
+    root.color = 0; // 将原先的root节点改成红色
+    if (root.left.color === 0) {
+      root = rightRotate(root);
+      root.right = eraseMaintain(root.right);
+    } else {
+      root = leftRotate(root);
+      root.left = eraseMaintain(root.left);
+    }
+    root.color = 1; // 将新的root节点改成黑色
+    return root;
+  }
+  // 说明双重黑的兄弟节点y是黑色
+  if (
+    (root.left.color === 1 && !hasRedChild(root.left)) ||
+    (root.right.color === 1 && !hasRedChild(root.right))
+  ) {
+    // 情况一：y下面没有红色子节点
+    root.left.color -= 1;
+    root.right.color -= 1;
+    root.color += 1;
+    return root;
+  }
+  // 情况二
+  if (root.left.color === 1) {
+    // L
+    root.right.color = 1; // 先将双重黑变成黑
+    if (root.left.left.color !== 0) {
+      // LR
+      // 先一个左旋变成LL类型
+      root.left.color = 0; // 原根节点变成红色
+      root.left = leftRotate(root.left);
+      root.left.color = 1; // 新根节点变为黑色
+    }
+    root.left.color = root.color; // 将新根的颜色变成原根的颜色
+    root = rightRotate(root); // LL
+  } else {
+    // R
+    root.left.color = 1; // 先将双重黑变成黑
+    if (root.right.right.color !== 0) {
+      // RL
+      // 先一个右旋变成RR类型
+      root.right.color = 0; // 原根节点变成红色
+      root.right = rightRotate(root.right);
+      root.right.color = 1; // 新根节点变为黑色
+    }
+    root.right.color = root.color; // 将新根的颜色变成原根的颜色
+    root = leftRotate(root); // RR
+  }
+  root.left.color = root.right.color = 1; // 将当前根节点的子节点都改为黑色
+  return root;
+}
+
+// 寻找前驱节点
+function predeccessor(root) {
+  let temp = root.left;
+  while (temp.right !== NIL) temp = temp.right;
+  return temp;
+}
+
 // 判断子节点是否为红色
 function hasRedChild(root) {
   if (root === NIL) return false;
@@ -96,12 +194,16 @@ function rightRotate(root) {
 (function () {
   let root = NIL;
   let n = 1;
-  while (n < 10) {
+  while (n < 7) {
     root = insert(root, n++);
-    console.log("==== rbt print ====");
-    output(root);
-    console.log("==== rbt print done ====");
   }
+  // console.log("==== before erase ====");
+  // output(root);
+  // console.log("==== before erase ====");
+  root = erase(root, 3);
+  console.log("==== print ====");
+  output(root);
+  console.log("==== print done ====");
 })();
 
 // 前序遍历打印root
