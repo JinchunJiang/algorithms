@@ -17,10 +17,12 @@ function bruteForce(text, pattern) {
 function kmp(text, pattern) {
   const n = pattern.length;
   const next = new Array(n);
+  // 在模式串中，以当前位置作为结尾，求最长的相等前缀Ta和后缀Tb
+  // j的位置即为Ta的最后一位
   function getNext() {
     next[0] = -1;
     for (let i = 1, j = -1; pattern[i]; i++) {
-      while (j !== -1 && pattern[j + 1] !== pattern[i]) j = next[j];
+      while (j !== -1 && pattern[j + 1] !== pattern[i]) j = next[j]; // j往前跳
       if (pattern[j + 1] === pattern[i]) j++;
       next[i] = j;
     }
