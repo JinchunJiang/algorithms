@@ -70,3 +70,5 @@ Heap.prototype.adjustDown = function () {
     }
   }
 };
+
+exports.Heap = Heap;
